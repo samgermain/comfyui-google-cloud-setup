@@ -23,7 +23,10 @@
 # https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
 
 # Remove any current driver first
-sudo nvidia-uninstall
+
+if command -v nvidia-uninstall >/dev/null 2>&1; then
+    sudo nvidia-uninstall
+fi
 sudo apt-get purge -y '^nvidia-.*'
 sudo apt-get autoremove -y
 
