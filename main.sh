@@ -1,5 +1,5 @@
 # --------------------------------------------- SETUP VM ---------------------------------------------
-# Make VM with spot, GPU, set OS to CUDA w 500gb harddrive, 8 vCPU, 45GB RAM, firewall turn http traffic on
+# Make VM with spot, GPU, set OS to CUDA w 500gb harddrive, 8 vCPU, 30GB RAM, firewall turn http traffic on
 # ssh-keygen -t rsa -f ~/.ssh/gcp_ssh_key -C your_gmail@gmail.com
 # cat ~/.ssh/gcp_ssh_key.pub | pbcopy
 # Compute Engine -> VM Instances * Select Instance * edit -> ssh keys -> Add item *paste your ssh key* -> Save
@@ -9,22 +9,41 @@
     # Specified protocols and ports: tcp:8188
 # VPC Network -> IP Addresses
     # Set external IP to static address
+# TODO: instructions on getting the VM to stop automatically after being unused for 1 hr
 
 # --------------------------------------------- INSTALL COMFYUI ---------------------------------------------
 sudo apt-get update
 sudo apt-get install -y git wget
+sudo apt update
+sudo apt install -y \
+  build-essential curl \
+  libssl-dev zlib1g-dev \
+  libbz2-dev libreadline-dev \
+  libsqlite3-dev libffi-dev \
+  liblzma-dev tk-dev
+curl https://pyenv.run | bash
+cat << 'EOF' >> ~/.bashrc
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+EOF
+source ~/.bashrc
+pyenv install 3.12.1
+pyenv global 3.12.1
+
 cd ~
 git clone https://github.com/comfyanonymous/ComfyUI.git
 cd ComfyUI
 sudo apt-get install -y python3-venv
 python3 -m venv venv
 source venv/bin/activate
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 mkdir -p models/checkpoints
 
 # --------------------------------------------- MODELS ---------------------------------------------
 
+# TODO: FILL IN YOUR API KEYS INSIDE .ENV
 source .ENV
 
 # Ep 1 - Introduction and Installation
@@ -62,7 +81,10 @@ wget --header="Authorization: Bearer ${HF_TOKEN}" -c https://huggingface.co/Mazi
 wget --header="Authorization: Bearer ${HF_TOKEN}" -c https://huggingface.co/gemasai/4x_NMKD-Siax_200k/resolve/main/4x_NMKD-Siax_200k.pth  -P models/upscale_models
 
 # Ep 13 - Ollamas
-# https://ollama.com/
+# install docker
+curl -fsSL https://ollama.com/install.sh | sh
+ollama serve
+ollama pull gemma3 # or whatever ollama model you want
 
 # Ep 14 - Flux ControlNet Union Pro
 wget --header="Authorization: Bearer ${HF_TOKEN}" -c https://huggingface.co/Shakker-Labs/FLUX.1-dev-ControlNet-Union-Pro/resolve/main/diffusion_pytorch_model.safetensors -O models/controlnet/flux-dev-controlnet-union.safetensors 
@@ -90,7 +112,6 @@ wget https://civitai.com/models/677725/cute-3d-cartoon-flux -P models/loras/flux
 
 # Ep 19 - SDXL & Flux Inpainting Tips with ComfyUI
 curl -L -H "Authorization: Bearer $CIVITAI_API_KEY" -o models/checkpoints/sdxl/WildCardX-XL-ANIMATION.safetensors "https://civitai.com/api/download/models/456538?type=Model&format=SafeTensor&size=pruned&fp=fp16"
-
 
 # Ep 21 - OmniGen
 mkdir -p models/LLM/OmniGen-v1
@@ -139,6 +160,22 @@ wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-O
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors models/clip_vision
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors models/vae
 
+# Ep 62: Nunchaku Update | Qwen Control Net, Qwen Edit & Inpaint
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image/resolve/main/svdq-fp4_r128-qwen-image.safetensors -P models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b.safetensors -P models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/vae/qwen_image_vae.safetensors -P models/vae
+# control net
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/InstantX/Qwen-Image-ControlNet-Union/resolve/main/diffusion_pytorch_model.safetensors -O models/controlnet/qwen-image-instantx-controlnet-union.safetensors
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/InstantX/Qwen-Image-ControlNet-Inpainting/resolve/main/diffusion_pytorch_model.safetensors -O models/controlnet/qwen-image-instantx-controlnet-inpainting.safetensors
+# qwen edit
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image-edit/resolve/main/svdq-fp4_r128-qwen-image-edit.safetensors -P models/diffusion_models
+
+# Ep 64: 
+# wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2509_fp8mixed.safetensors -P models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image-edit-2509/resolve/main/svdq-int4_r128-qwen-image-edit-2509-lightningv2.0-4steps.safetensors -P models/diffusion_models
+# wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/main/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors -P models/clip
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors -P models/clip
+# Install the vae from episode 62
 
 # --------------------------------------------- WORKFLOWS ---------------------------------------------
 git clone https://github.com/samgermain/comfyui-workflows
@@ -159,11 +196,70 @@ for d in */; do
 done
 cd ..
 
+# Below are the correct installations for these episodes
+
 # Ep 33: How to Use Free & Local Text-to-Speech for AI Voiceovers
 # List of voices https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md
 git clone https://github.com/stavsap/comfyui-kokoro.git custom_nodes/comfyui-kokoro
 pip install pylatexenc
 pip install custom_nodes/comfyui-kokoro/requirements.txt
+
+pip install comfy-cli
+
+# Ep 64: Nunchaku Qwen Image Edit 2509
+git clone https://github.com/mit-han-lab/ComfyUI-nunchaku.git ~/ComfyUI/custom_nodes/ComfyUI-nunchaku
+cd ~/ComfyUI/custom_nodes/ComfyUI-nunchaku
+git fetch --tags
+git checkout tags/v1.0.2 -b v1.0.2
+cd ../../
+PY_MINOR=$(python -c "import sys; print(sys.version_info.minor)")
+TORCH_VER=$(python -c "import torch; print('.'.join(torch.__version__.split('.')[:2]))")
+# LATEST_RELEASE=$(grep '^version' ~/ComfyUI/custom_nodes/ComfyUI-nunchaku/pyproject.toml | head -n1 | cut -d '"' -f2)
+LATEST_RELEASE="1.0.2"
+WHEEL_URL=$(cat <<EOF
+https://github.com/nunchaku-tech/nunchaku/releases/download/v${LATEST_RELEASE}/nunchaku-${LATEST_RELEASE}+torch${TORCH_VER}-cp3${PY_MINOR}-cp3${PY_MINOR}-linux_x86_64.whl
+EOF
+)
+pip install --no-cache-dir "$WHEEL_URL"
+# pip install --force-reinstall numpy
+curl -L -o ~/ComfyUI/custom_nodes/ComfyUI-nunchaku/nunchaku_versions.json https://nunchaku.tech/cdn/nunchaku_versions.json
+# SageAttention
+TORCH_VER=$(python3 - <<'EOF'
+import torch
+v = torch.__version__.split("+")[0]
+print(".".join(v.split(".")[:2]))
+EOF
+)
+
+case "$TORCH_VER" in
+  2.6)
+    TRITON_VER="3.2.0"
+    ;;
+  2.7|2.8)
+    TRITON_VER="3.3.1"
+    ;;
+  2.9|2.10|2.11|2.12)
+    TRITON_VER="3.5.1"
+    ;;
+  *)
+    echo "Unsupported Torch version: $TORCH_VER"
+    exit 1
+    ;;
+esac
+
+pip install --force-reinstall triton=="$TRITON_VER"
+
+export TORCH_CUDA_ARCH_LIST=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | sed 's/$/+PTX/' | paste -sd ";")
+
+pip uninstall -y sageattention
+rm -rf ~/.cache/torch_extensions
+
+pip install \
+  --no-cache-dir \
+  --force-reinstall \
+  --no-build-isolation \
+  git+https://github.com/thu-ml/SageAttention
+
 
 # List of extensions to install:
 
@@ -199,5 +295,7 @@ pip install custom_nodes/comfyui-kokoro/requirements.txt
 
 # --------------------------------------------- RUN COMFYUI ---------------------------------------------
 cd ~/ComfyUI
+echo 'alias comfyui="python ~/ComfyUI/main.py --listen 0.0.0.0 --port 8188"' > ~/.bash_aliases  # create shortcut
+source ~/.bashrc
 source venv/bin/activate
-python main.py --listen 0.0.0.0 --port $PORT
+comfyui
