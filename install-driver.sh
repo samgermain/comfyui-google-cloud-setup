@@ -1,7 +1,9 @@
 #!/bin/bash -eu
-# Modified from google cloouds install_driver.sh program that comes inside /opt/deeplearning/install_driver.sh
+# Modified from google clouds install_driver.sh program that comes inside /opt/deeplearning/install_driver.sh
 #    - Added section to remove current driver
-#   - updated driver version to 550.127.08
+#    - updated driver version to 570.124.06
+#    - added reboot to end of script
+#
 # Copyright 2020 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -153,7 +155,18 @@ function install_nvidia_linux_drivers() {
   # interactive prompts, --no-drm skips the DRM module installation, and
   # --install-libglvnd installs the libglvnd package, open_kernel_module_arg
   # installs the open kernel modules if supported on the machine type.
-  sudo ./${driver_installer_file_name} --dkms -a --ui=none --no-questions --no-drm --install-libglvnd "${open_kernel_module_arg}"
+  # sudo ./${driver_installer_file_name} --dkms -a --ui=none --no-questions --no-drm --install-libglvnd "${open_kernel_module_arg}"
+  ################################################# UPDATED LINE #################################################
+  sudo ./${driver_installer_file_name} \
+  --dkms -a \
+  --ui=none \
+  --no-questions \
+  --allow-installation-with-running-driver \
+  --no-drm \
+  --install-libglvnd \
+  "${open_kernel_module_arg}"
+  ##################################################################################################################
+
   rm -rf ${driver_installer_file_name}
 }
 
@@ -161,12 +174,13 @@ main() {
   wait_apt_locks_released
   install_linux_headers
   # shellcheck source=/opt/deeplearning/driver-version.sh disable=SC1091
-  export DRIVER_VERSION=550.127.08
+  export DRIVER_VERSION=570.124.06
   export DRIVER_GCS_PATH
   # Custom GCS driver location via instance metadata.
   DRIVER_GCS_PATH=$(get_attribute_value nvidia-driver-gcs-path)
   install_nvidia_linux_drivers
   exit 0
+  sudo reboot
 }
 
 main
