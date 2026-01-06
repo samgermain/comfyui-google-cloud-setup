@@ -174,7 +174,7 @@ main() {
   wait_apt_locks_released
   install_linux_headers
   # shellcheck source=/opt/deeplearning/driver-version.sh disable=SC1091
-  export DRIVER_VERSION=570.124.06
+  export DRIVER_VERSION=590.48.01
   export DRIVER_GCS_PATH
   # Custom GCS driver location via instance metadata.
   DRIVER_GCS_PATH=$(get_attribute_value nvidia-driver-gcs-path)
