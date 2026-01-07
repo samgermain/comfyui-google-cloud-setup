@@ -23,7 +23,6 @@ echo 'export PATH=/usr/local/cuda-13.0/bin:$PATH' | sudo tee /etc/profile.d/cuda
 echo 'export LD_LIBRARY_PATH=/usr/local/cuda-13.0/lib64:$LD_LIBRARY_PATH' | sudo tee -a /etc/profile.d/cuda.sh
 source /etc/profile.d/cuda.sh
 
-
 cd ~
 git clone https://github.com/comfyanonymous/ComfyUI.git
 cd ComfyUI

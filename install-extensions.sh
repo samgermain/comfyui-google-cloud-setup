@@ -1,30 +1,64 @@
-# I just pushed all my custom nodes to my server from my local machine
-# TODO: update to pull from github repo instead of scp
-# Locally run  scp -i ~/.ssh/gcp_ssh_key  -r ~/Documents/ComfyUI/custom_nodes/* ${SERVER}:~/ComfyUI/custom_nodes
-
-source ~/ComfyUI/venv/bin/activate
-cd custom_nodes
-for d in */; do
-    if [ -f "$d/requirements.txt" ]; then
-        pip install -r "$d/requirements.txt"
+for repo in \
+    https://github.com/theUpsider/ComfyUI-Styles_CSV_Loader \
+    https://github.com/comfyanonymous/ComfyUI_bitsandbytes_NF4 \
+    https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes \
+    https://github.com/crystian/ComfyUI-Crystools \
+    https://github.com/SeargeDP/ComfyUI_Searge_LLM \
+    https://github.com/kijai/ComfyUI-Florence2 \
+    https://github.com/john-mnz/ComfyUI-Inspyrenet-Rembg \
+    https://github.com/Ling-APE/ComfyUI-PixelResolutionCalculator \
+    https://github.com/stavsap/comfyui-ollama \
+    https://github.com/MohammadAboulEla/ComfyUI-iTools \
+    https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch \
+    https://github.com/Lerc/canvas_tab \
+    https://github.com/1038lab/ComfyUI-OmniGen \
+    https://github.com/kaibioinfo/ComfyUI_AdvancedRefluxControl \
+    https://github.com/PowerHouseMan/ComfyUI-AdvancedLivePortrait \
+    https://github.com/Yanick112/ComfyUI-ToSVG \
+    https://github.com/CY-CHENYUE/ComfyUI-Janus-Pro \
+    https://github.com/stavsap/comfyui-kokoro.git \
+    https://github.com/Comfy-Org/ComfyUI-Manager \
+    https://github.com/yolain/ComfyUI-Easy-Use \
+    https://github.com/Fannovel16/comfyui_controlnet_aux \
+    https://github.com/Suzie1/ComfyUI_Comfyroll_CustomNodes \
+    https://github.com/rgthree/rgthree-comfy \
+    https://github.com/city96/ComfyUI-GGUF \
+    https://github.com/MohammadAboulEla/ComfyUI-iTools \
+    https://github.com/lquesada/ComfyUI-Inpaint-CropAndStitch \
+    https://github.com/1038lab/ComfyUI-RMBG \
+    https://github.com/Kosinkadink/ComfyUI-VideoHelperSuite \
+    https://github.com/welltop-cn/ComfyUI-TeaCache \
+    https://github.com/shiimizu/ComfyUI-TiledDiffusion \
+    https://github.com/kijai/ComfyUI-KJNodes \
+    https://github.com/kijai/ComfyUI-WanVideoWrapper \
+    https://github.com/1038lab/ComfyUI-QwenVL \
+    https://github.com/nunchaku-tech/ComfyUI-nunchaku \
+    https://github.com/thu-ml/SageAttention \
+    https://github.com/Dao-AILab/flash-attention \
+    https://github.com/visualbruno/ComfyUI-Trellis2 \
+    https://github.com/deepinsight/insightface \
+    https://github.com/ussoewwin/ComfyUI-QwenImageLoraLoader
+    # https://github.com/WASasquatch/was-node-suite-comfyui \ Archived
+do
+    name=$(basename "$repo" .git)
+    git clone "$repo" "$HOME/ComfyUI/custom_nodes/$name"
+    if [ -f "$HOME/ComfyUI/custom_nodes/$name/requirements.txt" ]; then
+        pip install -r "$HOME/ComfyUI/custom_nodes/$name/requirements.txt"
     fi
 done
-cd ..
+# one by one command
+# git clone https://github.com/rgthree/rgthree-comfy ~/ComfyUI/custom_nodes/rgthree-comfy; pip install -r ~/ComfyUI/custom_nodes/rgthree-comfy/requirements.txt
 
-# Below are the correct installations for these episodes
+
+# ComfyUI-ToSVG
+# Nodes Kokoro Speaker
+# Kokoro Generator
+# Save Audio
 
 # Ep 13: Ollama
 curl -fsSL https://ollama.com/install.sh | sh
 ollama serve
 ollama pull gemma3 # or whatever ollama model you want
-
-# Ep 33: How to Use Free & Local Text-to-Speech for AI Voiceovers
-# List of voices https://huggingface.co/hexgrad/Kokoro-82M/blob/main/VOICES.md
-git clone https://github.com/stavsap/comfyui-kokoro.git custom_nodes/comfyui-kokoro
-pip install pylatexenc
-pip install custom_nodes/comfyui-kokoro/requirements.txt
-
-pip install comfy-cli
 
 # Ep 64: Nunchaku Qwen Image Edit 2509
 git clone https://github.com/mit-han-lab/ComfyUI-nunchaku.git ~/ComfyUI/custom_nodes/ComfyUI-nunchaku
@@ -36,48 +70,14 @@ https://github.com/nunchaku-tech/nunchaku/releases/download/v${LATEST_RELEASE}/n
 EOF
 )
 pip install --no-cache-dir "$WHEEL_URL"
+pip install -r ~/ComfyUI/custom_nodes/ComfyUI-nunchaku/requirements.txt
 # pip install --force-reinstall numpy
 curl -L -o ~/ComfyUI/custom_nodes/ComfyUI-nunchaku/nunchaku_versions.json https://nunchaku.tech/cdn/nunchaku_versions.json
 
 # SageAttention
 pip install --force-reinstall triton==3.5.1
-
-export TORCH_CUDA_ARCH_LIST=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | sed 's/$/+PTX/' | paste -sd ";")
-
+# export TORCH_CUDA_ARCH_LIST=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader | sed 's/$/+PTX/' | paste -sd ";")
 pip uninstall -y sageattention
 rm -rf ~/.cache/torch_extensions
-
 pip install  --no-cache-dir  --force-reinstall  --no-build-isolation git+https://github.com/thu-ml/SageAttention
 
-
-# List of extensions to install:
-
-# styles csv loader" created by theUpsider
-# Was Node Suite
-# ComfyUI Easy Use
-# https://github.com/comfyanonymous/ComfyUI_bitsandbytes_NF4 ; pip install -U bitsandbytes 
-# comfyui_controlnet_aux
-# Comfyroll Studio
-# rgthree
-# Crystools
-# ID 97 Searge-LLM
-# ComfyUI-Florence2 by kijai
-# ComfyUI-Inspyrenet-Rembg
-# ComfyUI-PixelResolutionCalculator
-# ControlAltAI Nodes
-# ComfyUI Ollama created by stavsap
-# ComfyUI-GGUF
-# comfyui itools
-# ComfyUI-Inpaint-CropAndStitch
-# canvas tab
-# ComfyUI-OmniGen by the author 1038lab
-# Advanced Reflux control
-# ComfyUI-AdvancedLivePortrait
-# ComfyUI-VideoHelperSuite
-# ComfyUI-ToSVG
-# https://github.com/stavsap/comfyui-kokoro.git
-# Nodes Kokoro Speaker
-# Kokoro Generator
-# Save Audio
-# ComfyUI-Janus-Pro created by the author cychenyue
-# ComfyUI-VideoHelperSuite

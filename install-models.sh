@@ -121,6 +121,17 @@ wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-O
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors -P ~/ComfyUI/models/clip_vision
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors -P ~/ComfyUI/models/vae
 
+# Ep 55:  Sage Attention, Wan Fusion X, Wan 2.2 & Video Upscale Tips
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/resolve/main/wan2.2_i2v_high_noise_14B_Q4_K_M.gguf -P ~/ComfyUI/models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors -P ~/ComfyUI/models/text_encoders
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/vae/wan_2.1_vae.safetensors -P ~/ComfyUI/models/vae
+
+# Ep 61:
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/flux1-dev/resolve/main/flux1-dev-fp8.safetensors -P ~/ComfyUI/models/checkpoints
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/sigclip_vision_384/resolve/main/sigclip_vision_patch14_384.safetensors -P ~/ComfyUI/models/clip_visions
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/USO_1.0_Repackaged/resolve/main/split_files/model_patches/uso-flux1-projector-v1.safetensors -P  ~/ComfyUI/models/model_patches
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/USO_1.0_Repackaged/resolve/main/split_files/loras/uso-flux1-dit-lora-v1.safetensors -P ~/ComfyUI/models/loras/flux
+
 # Ep 62: Nunchaku Update | Qwen Control Net, Qwen Edit & Inpaint
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image/resolve/main/svdq-fp4_r128-qwen-image.safetensors -P ~/ComfyUI/models/diffusion_models
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b.safetensors -P ~/ComfyUI/models/diffusion_models
@@ -132,9 +143,56 @@ wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Instant
 # qwen edit
 wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image-edit/resolve/main/svdq-fp4_r128-qwen-image-edit.safetensors -P ~/ComfyUI/models/diffusion_models
 
-# Ep 64: 
-# wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image-Edit_ComfyUI/resolve/main/split_files/diffusion_models/qwen_image_edit_2509_fp8mixed.safetensors -P ~/ComfyUI/models/diffusion_models
-wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image-edit-2509/resolve/main/svdq-int4_r128-qwen-image-edit-2509-lightningv2.0-4steps.safetensors -P ~/ComfyUI/models/diffusion_models
-# wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/lightx2v/Qwen-Image-2512-Lightning/resolve/main/Qwen-Image-2512-Lightning-4steps-V1.0-fp32.safetensors -P ~/ComfyUI/models/clip
-wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b_fp8_scaled.safetensors -P ~/ComfyUI/models/clip
-# Install the vae from episode 62
+# Ep 64: Nunchaku Qwen Image Edit 2509
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/nunchaku-tech/nunchaku-qwen-image-edit/resolve/main/svdq-int4_r32-qwen-image-edit.safetensors -P ~/ComfyUI/models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image_ComfyUI/resolve/main/split_files/text_encoders/qwen_2.5_vl_7b.safetensors -P ~/ComfyUI/models/clip
+# qwen_image_vae.safetensors
+
+# Ep 65: VibeVoice Free Text to Speech Workflow
+mkdir ~/ComfyUI/models/vibevoice/
+mkdir ~/ComfyUI/models/vibevoice/tokenizer/
+mkdir ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Qwen/Qwen2.5-1.5B/resolve/main/tokenizer_config.json -P ~/ComfyUI/models/vibevoice/tokenizer/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Qwen/Qwen2.5-1.5B/resolve/main/merges.txt -P ~/ComfyUI/models/vibevoice/tokenizer/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Qwen/Qwen2.5-1.5B/resolve/main/tokenizer.json -P ~/ComfyUI/models/vibevoice/tokenizer/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Qwen/Qwen2.5-1.5B/resolve/main/vocab.json -P ~/ComfyUI/models/vibevoice/tokenizer/
+
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/config.json -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/model.safetensors.index.json -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/model-00001-of-00003.safetensors -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/model-00002-of-00003.safetensors -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/model-00003-of-00003.safetensors -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/microsoft/VibeVoice-1.5B/resolve/main/preprocessor_config.json -P ~/ComfyUI/models/vibevoice/VibeVoice-1.5B/
+
+# Ep 66:  Qwen Outpainting Workflow + Subgraph Tips
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Qwen-Image-InstantX-ControlNets/resolve/main/split_files/controlnet/Qwen-Image-InstantX-ControlNet-Inpainting.safetensors -P ~/ComfyUI/models/controlnet
+
+# Ep 67: Fluxmania Nunchaku + Wan 2.2 and Rapid AIO Workflows
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/resolve/main/wan2.2_i2v_high_noise_14B_Q4_K_M.GGUF -P ~/ComfyUI/models/diffusion_models # https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/tree/main
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/resolve/main/wan2.2_i2v_low_noise_14B_Q4_K_M.gguf -P ~/ComfyUI/models/diffusion_models # https://huggingface.co/bullerwins/Wan2.2-I2V-A14B-GGUF/tree/main
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/text_encoders/umt5_xxl_fp8_e4m3fn_scaled.safetensors -P ~/ComfyUI/models/text_encoders
+# wan_2.1_vae.safetensors
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22-Lightning/old/Wan2.2-Lightning_I2V-A14B-4steps-lora_HIGH_fp16.safetensors -P ~/ComfyUI/models/loras/wan22
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22-Lightning/old/Wan2.2-Lightning_I2V-A14B-4steps-lora_LOW_fp16.safetensors -P ~/ComfyUI/models/loras/wan22
+
+# Ep 68: How to Create Anime Illustrations - NetaYume v3.5
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/duongve/NetaYume-Lumina-Image-2.0/resolve/main/NetaYumev35_pretrained_all_in_one.safetensors -P ~/ComfyUI/models/checkpoints
+
+# Ep 69:  Create Long Videos with LongCat Video Model
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Kijai/LongCat-Video_comfy/resolve/main/LongCat_TI2V_comfy_bf16.safetensors -P ~/ComfyUI/models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Kijai/LongCat-Video_comfy/resolve/main/LongCat_distill_lora_alpha64_bf16.safetensors -P ~/ComfyUI/models/loras/wan
+# wan_2.1_vae.safetensors
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/ALGOTECH/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors -P ~/ComfyUI/models/clip
+
+# Ep 70: Nunchaku Qwen Loras - Relight, Camera Angle & Scene Change 
+# See Ep 64 and 62 models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/ostris/qwen_image_edit_2509_shirt_design/resolve/main/qwen_image_edit_2509_shirt_design.safetensors -P ~/ComfyUI/models/loras/qwen
+
+# Ep 72: Z-Image Turbo Workflows, ControlNet Essentials & LoRA Training
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/diffusion_models/z_image_turbo_bf16.safetensors -P ~/ComfyUI/models/diffusion_models
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/Comfy-Org/z_image_turbo/resolve/main/split_files/text_encoders/qwen_3_4b.safetensors -P ~/ComfyUI/models/text_encoders
+
+# Ep 73: Final Episode & Z-Image ControlNet 2.0 
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/SeeSee21/Z-Image-Turbo-AIO/resolve/main/z-image-turbo-bf16-aio.safetensors -P ~/ComfyUI/models/checkpoints
+wget --header="Authorization: Bearer ${HF_TOKEN}" https://huggingface.co/alibaba-pai/Z-Image-Turbo-Fun-Controlnet-Union-2.0/resolve/main/Z-Image-Turbo-Fun-Controlnet-Union-2.0.safetensors -P ~/ComfyUI/models/model_patches
